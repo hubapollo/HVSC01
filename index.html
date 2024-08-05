@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DISC Assessment Test</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+       h1 {
+    color: #4A90E2;
+}
+
+p {
+    color: #666;
+}
+
+/* Progress bar styles */
+#progress-bar {
+    width: 100%;
+    background-color: #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+#progress {
+    height: 10px;
+    background-color: #4A90E2;
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+}
+
+/* Question card styles */
+#question-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.question-card {
+    padding: 20px;
+    width: 100%;
+}
+
+.question-card h2 {
+    margin-bottom: 15px;
+}
+
+.question-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.question-card li {
+    margin: 10px 0;
+}
+
+.question-card input[type="radio"] {
+    margin-right: 10px;
+}
+
+.question-card.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Navigation buttons */
+#navigation {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4A90E2;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+    background-color: #357ABD;
+}
+
+/* Footer styles */
+footer {
+    margin-top: 30px;
+    color: #999;
+}
+
+#name-input-container {
+    margin-bottom: 20px;
+}
+
+#error-message {
+    color: red;
+    display: none;
+}
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>DISC Assessment Test</h1>
+            <p>Discover your personality style and get insights!</p>
+        </header>
+
+        <div id="name-input-container">
+            <input type="text" id="name-input" placeholder="Enter your name" required>
+            <button id="start-btn">Start Test</button>
+            <p id="error-message">Please enter your name to continue.</p>
+        </div>
+
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+
+        <div id="question-container">
+            <!-- Questions will be loaded here -->
+        </div>
+
+        <div id="navigation">
+            <button id="prev-btn" disabled>Previous</button>
+            <button id="next-btn" disabled>Next</button>
+        </div>
+
+        <footer>
+            <p>© 2024 DISC Assessment. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Minha personalidade é mais...",
+                answers: [
+                    { text: "De chefe e direta", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Extrovertida e expressiva", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Pacata e informal", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "De bom senso e precisa", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Eu prefiro um ambiente em que estou cercado por...",
+                answers: [
+                    { text: "Realização pessoal, recompensa e indicadores de alvos", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Fotografias, cartas e minhas “coisas”", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Lembranças e conforto", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Ordem, funcionalidade e organização", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Meu estilo pessoal tende a ser...",
+                answers: [
+                    { text: "Orientado para resultados", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Orientado para pessoas", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Orientado para equipe/processos", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Orientado para detalhes", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Minha maneira de responder a outros é ...",
+                answers: [
+                    { text: "Direta ao assunto", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Amigável e prestativa", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Equilibrada e controlada", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Fria e objetiva", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Quando ouço os outros, eu...",
+                answers: [
+                    { text: "Fico impaciente muitas vezes", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Minha mente começa a divagar", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Quero ouvir com atenção", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Sou seletivo e focalizo os fatos", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Eu gosto de falar com outros...",
+                answers: [
+                    { text: "Sobre minhas realizações", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Sobre mim mesmo e outras pessoas", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Sobre minha família e amigos", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Sobre coisas, informações ou organização", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Nos relacionamentos minha tendência é...",
+                answers: [
+                    { text: "Dirigir outros", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Influenciar outros", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Aceitar outros", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Avaliar outros", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Quando tomo decisões eu tenho inclinação para...",
+                answers: [
+                    { text: "Ser rápido ou usar as reações impulsivas", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Fazer o que eu sinto", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Estudar a situação e ser cauteloso", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Coletar informações e ser objetivo", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Em relação ao uso do meu tempo, eu acho que...",
+                answers: [
+                    { text: "Estou sempre pressionado pelo tempo", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Eu tendo a pensar no custo do tempo", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Eu respeito o tempo, mas não sou facilmente pressionado", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Eu valorizo e administro bem meu tempo", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "O ritmo com que eu vivo é...",
+                answers: [
+                    { text: "Veloz", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Entusiástico", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Equilibrado", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Controlado", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Meu tom normal de voz é...",
+                answers: [
+                    { text: "Emotivo, direto e dinâmico", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Emotivo e entusiasmado", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "De baixa emoção e baixa excitação", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Sem emoção e reservado", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Meus gestos geralmente são...",
+                answers: [
+                    { text: "Fortes e rápidos", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Abertos e amigáveis", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Comedidos", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Restritos e intencionais", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Minha maneira preferida de vestir-me é...",
+                answers: [
+                    { text: "Formal", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Casual", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Conforme o lugar", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Conservadora", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Minhas atitudes em geral podem ser descritas como...",
+                answers: [
+                    { text: "Autoritárias", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Elegantes, simpáticas e extrovertidas", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "Tolerantes ou abertas", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Observadoras ou reservadas", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            },
+            {
+                question: "Minhas conversas giram em torno de...",
+                answers: [
+                    { text: "Ir ao “X” da questão", value: { D: 4, I: 0, S: 0, C: 0 } },
+                    { text: "Histórias sobre mim mesmo e outros", value: { D: 0, I: 4, S: 0, C: 0 } },
+                    { text: "“como fazer” e/ou relacionamentos", value: { D: 0, I: 0, S: 4, C: 0 } },
+                    { text: "Fatos, informações e dados", value: { D: 0, I: 0, S: 0, C: 4 } }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let scores = { D: 0, I: 0, S: 0, C: 0 };
+        let userName = "";
+
+        const questionContainer = document.getElementById("question-container");
+        const progressBar = document.getElementById("progress");
+        const prevBtn = document.getElementById("prev-btn");
+        const nextBtn = document.getElementById("next-btn");
+        const startBtn = document.getElementById("start-btn");
+        const nameInput = document.getElementById("name-input");
+        const errorMessage = document.getElementById("error-message");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question-card active">
+                    <h2>${currentQuestion.question}</h2>
+                    <ul>
+                        ${currentQuestion.answers.map((answer, index) => `
+                            <li>
+                                <input type="radio" name="answer" id="answer${index}" value="${index}">
+                                <label for="answer${index}">${answer.text}</label>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+
+            updateProgressBar();
+            nextBtn.disabled = true; // Disable next button until an answer is selected
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function handleNavigation() {
+            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
+            if (selectedAnswer) {
+                const answerIndex = selectedAnswer.value;
+                const selectedValues = questions[currentQuestionIndex].answers[answerIndex].value;
+                scores.D += selectedValues.D;
+                scores.I += selectedValues.I;
+                scores.S += selectedValues.S;
+                scores.C += selectedValues.C;
+
+                currentQuestionIndex++;
+
+                if (currentQuestionIndex >= questions.length) {
+                    showResults();
+                } else {
+                    loadQuestion();
+                }
+            }
+        }
+
+        function showResults() {
+            questionContainer.innerHTML = `
+                <div class="question-card active">
+                    <h2>Result</h2>
+                    <p>Congratulations ${userName}, your DISC Assessment result is:</p>
+                    <ul>
+                        <li>Dominance (D): ${scores.D}</li>
+                        <li>Influence (I): ${scores.I}</li>
+                        <li>Steadiness (S): ${scores.S}</li>
+                        <li>Conscientiousness (C): ${scores.C}</li>
+                    </ul>
+                    <button onclick="printResults()">Print Results</button>
+                </div>
+            `;
+            prevBtn.style.display = "none";
+            nextBtn.style.display = "none";
+        }
+
+        function printResults() {
+            const printContents = document.querySelector('.question-card.active').innerHTML;
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        }
+
+        function startTest() {
+            userName = nameInput.value.trim();
+            if (userName === "") {
+                errorMessage.style.display = "block";
+            } else {
+                errorMessage.style.display = "none";
+                nameInput.style.display = "none";
+                startBtn.style.display = "none";
+                loadQuestion();
+                nextBtn.disabled = false;
+            }
+        }
+
+        startBtn.addEventListener("click", startTest);
+
+        prevBtn.addEventListener("click", () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        });
+
+        nextBtn.addEventListener("click", handleNavigation);
+
+        questionContainer.addEventListener("change", () => {
+            nextBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>
+
