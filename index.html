@@ -1,461 +1,596 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de Avaliação DISC</title>
+    <title>Teste DISC</title>
     <style>
-        /* Estilos Globais */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            background-color: #f7f7f7;
         }
 
         .container {
-            max-width: 600px;
-            width: 100%;
-            background-color: #fff;
+            width: 80%;
+            max-width: 800px;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        header {
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #4A90E2;
-            font-size: 24px;
-        }
-
-        p {
-            color: #666;
-            font-size: 16px;
-        }
-
-        /* Estilos da Barra de Progresso */
-        #progress-bar {
+        .progress-bar {
             width: 100%;
-            background-color: #ddd;
-            border-radius: 5px;
+            background-color: #e0e0e0;
+            border-radius: 20px;
             margin-bottom: 20px;
             overflow: hidden;
-            display: none; /* Esconde a barra de progresso até o teste começar */
         }
 
-        #progress {
+        .progress {
             height: 10px;
-            background-color: #4A90E2;
-            width: 0%;
+            width: 0;
+            background-color: #4caf50;
             transition: width 0.3s ease-in-out;
         }
 
-        /* Estilos do Cartão de Perguntas */
-        #question-container {
-            display: none; /* Esconde o container de perguntas até o teste começar */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        .card {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
             opacity: 0;
             transform: translateY(20px);
+            animation: fadeIn 0.5s forwards;
         }
 
-        .question-card {
-            padding: 20px;
-            width: 100%;
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
             text-align: left;
         }
 
-        .question-card h2 {
-            margin-bottom: 15px;
-            font-size: 18px;
+        .button:hover {
+            background-color: #1976d2;
         }
 
-        .question-card ul {
-            list-style: none;
-            padding: 0;
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .question-card li {
-            margin: 10px 0;
+        #resultContainer {
+            display: none;
+            margin-top: 20px;
         }
 
-        .question-card input[type="radio"] {
-            margin-right: 10px;
+        #chartContainer {
+            width: 100%;
+            height: 400px;
         }
 
-        .question-card.active {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0);
+        #chart {
+            height: 100%;
+            width: 100%;
         }
 
-        /* Botões de Navegação */
-        #navigation {
-            display: flex;
-            justify-content: space-between;
-            display: none; /* Esconde os botões de navegação até o teste começar */
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4A90E2;
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 16px;
-        }
-
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        button:hover:not(:disabled) {
-            background-color: #357ABD;
-        }
-
-        /* Estilos do Rodapé */
-        footer {
-            margin-top: 30px;
-            color: #999;
-            font-size: 14px;
-        }
-
-        #name-input-container {
+        #nameInput {
             margin-bottom: 20px;
-        }
-
-        #name-input {
+            width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
-            width: calc(100% - 20px);
-            margin-bottom: 10px;
         }
 
-        #error-message {
-            color: red;
+        .hide {
             display: none;
-            font-size: 14px;
         }
 
         @media print {
             body * {
                 visibility: hidden;
             }
-            .question-card.active, .question-card.active * {
+
+            #resultContainer,
+            #resultContainer * {
                 visibility: visible;
             }
-            .question-card.active {
+
+            #resultContainer {
                 position: absolute;
-                top: 0;
                 left: 0;
-                right: 0;
-                bottom: 0;
-                margin: auto;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            #nameInput {
+                font-size: 14px;
+            }
+
+            .button {
+                padding: 8px 16px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <header>
-            <h1>Teste de Avaliação DISC</h1>
-            <p>Descubra seu estilo de personalidade e obtenha insights!</p>
-        </header>
+        <p>Por favor, responda ao teste de acordo com quem você realmente é, não como você deseja ser.</p>
+        <input type="text" id="nameInput" placeholder="Digite seu nome" required>
 
-        <div id="name-input-container">
-            <input type="text" id="name-input" placeholder="Digite seu nome" required>
-            <button id="start-btn">Iniciar Teste</button>
-            <p id="error-message">Por favor, digite seu nome para continuar.</p>
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
         </div>
 
-        <div id="progress-bar">
-            <div id="progress"></div>
+        <div id="questionContainer">
+            <!-- Question Cards -->
+            <div class="card" id="question1">
+                <h2>Pergunta 1</h2>
+                <p>Quando estou em um projeto de grupo, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('I')">Motivar e inspirar os outros a fazerem seu melhor.</button>
+                    <button class="button" onclick="answerQuestion('S')">Trabalhar junto com os outros, garantindo que todos estejam confortáveis.</button>
+                    <button class="button" onclick="answerQuestion('C')">Focar nos detalhes e assegurar que tudo esteja sendo feito corretamente.</button>
+                    <button class="button" onclick="answerQuestion('D')">Tomar a liderança e garantir que tudo esteja no caminho certo.</button>
+                </div>
+            </div>
+
+            <!-- Repeat Question Cards as Needed -->
+            <div class="card hide" id="question2">
+                <h2>Pergunta 2</h2>
+                <p>Quando enfrento um desafio, eu geralmente:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('I')">Reúno pessoas para obter novas ideias.</button>
+                    <button class="button" onclick="answerQuestion('D')">Ataco diretamente e encontro a solução mais rápida.</button>
+                    <button class="button" onclick="answerQuestion('C')">Coleto todas as informações necessárias antes de decidir.</button>
+                    <button class="button" onclick="answerQuestion('S')">Avalio cuidadosamente as opções antes de agir.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question3">
+                <h2>Pergunta 3</h2>
+                <p>Em situações sociais, eu sou mais propenso a:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Analisar a situação antes de interagir.</button>
+                    <button class="button" onclick="answerQuestion('D')">Assumir o controle e liderar a conversa.</button>
+                    <button class="button" onclick="answerQuestion('I')">Fazer amigos rapidamente e divertir a todos.</button>
+                    <button class="button" onclick="answerQuestion('S')">Ficar observando até me sentir confortável.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question4">
+                <h2>Pergunta 4</h2>
+                <p>Quando se trata de prazos, eu:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Planejo meu tempo cuidadosamente para não me apressar.</button>
+                    <button class="button" onclick="answerQuestion('I')">Costumo procrastinar, mas consigo terminar a tempo.</button>
+                    <button class="button" onclick="answerQuestion('C')">Me certifico de seguir um cronograma rigoroso para não perder o prazo.</button>
+                    <button class="button" onclick="answerQuestion('D')">Gosto de superá-los e terminar antes do tempo.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question5">
+                <h2>Pergunta 5</h2>
+                <p>Ao tomar decisões, eu geralmente:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('I')">Busco o consenso e a opinião de outros.</button>
+                    <button class="button" onclick="answerQuestion('S')">Prefiro tomar meu tempo para considerar todas as opções.</button>
+                    <button class="button" onclick="answerQuestion('C')">Baseio-me em dados e lógica para tomar decisões.</button>
+                    <button class="button" onclick="answerQuestion('D')">Sou rápido e decidido.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question6">
+                <h2>Pergunta 6</h2>
+                <p>Em um dia típico de trabalho, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('I')">Colaborar com colegas e criar novas ideias.</button>
+                    <button class="button" onclick="answerQuestion('C')">Trabalhar em tarefas detalhadas e precisas.</button>
+                    <button class="button" onclick="answerQuestion('D')">Resolver problemas complexos e assumir riscos.</button>
+                    <button class="button" onclick="answerQuestion('S')">Ter um ambiente de trabalho estável e previsível.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question7">
+                <h2>Pergunta 7</h2>
+                <p>Quando encontro um obstáculo, minha reação é:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Analisar todas as causas possíveis antes de agir.</button>
+                    <button class="button" onclick="answerQuestion('D')">Superá-lo com determinação e assertividade.</button>
+                    <button class="button" onclick="answerQuestion('I')">Usar minha criatividade para encontrar uma solução.</button>
+                    <button class="button" onclick="answerQuestion('S')">Ser paciente e procurar um caminho alternativo.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question8">
+                <h2>Pergunta 8</h2>
+                <p>Em uma reunião, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Ouvir e apoiar as opiniões dos outros.</button>
+                    <button class="button" onclick="answerQuestion('I')">Interagir e trocar ideias com os outros.</button>
+                    <button class="button" onclick="answerQuestion('D')">Focar nos objetivos e resultados.</button>
+                    <button class="button" onclick="answerQuestion('C')">Apresentar dados e análises detalhadas.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question9">
+                <h2>Pergunta 9</h2>
+                <p>Quando se trata de mudanças, eu:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Prefiro manter as coisas como estão.</button>
+                    <button class="button" onclick="answerQuestion('D')">Abraço e procuro implementá-las rapidamente.</button>
+                    <button class="button" onclick="answerQuestion('I')">Gosto de explorar novas possibilidades.</button>
+                    <button class="button" onclick="answerQuestion('C')">Analiso os prós e contras antes de aceitar.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question10">
+                <h2>Pergunta 10</h2>
+                <p>Se eu tenho um desentendimento com alguém, eu:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Reavalio os fatos e apresento minha perspectiva calmamente.</button>
+                    <button class="button" onclick="answerQuestion('D')">Confronto a pessoa e resolvo o problema diretamente.</button>
+                    <button class="button" onclick="answerQuestion('I')">Procuro maneiras de suavizar a situação com humor.</button>
+                    <button class="button" onclick="answerQuestion('S')">Tento encontrar um compromisso que funcione para ambos.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question11">
+                <h2>Pergunta 11</h2>
+                <p>Quando estou em uma equipe, eu geralmente:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Forneço dados precisos e relatórios detalhados.</button>
+                    <button class="button" onclick="answerQuestion('D')">Tomo a iniciativa e lidero as atividades.</button>
+                    <button class="button" onclick="answerQuestion('I')">Encorajo todos a participar e manter a moral alta.</button>
+                    <button class="button" onclick="answerQuestion('S')">Contribuo de forma consistente e apoio os outros.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question12">
+                <h2>Pergunta 12</h2>
+                <p>Ao enfrentar um problema, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Consultar os outros e ouvir suas sugestões.</button>
+                    <button class="button" onclick="answerQuestion('D')">Agir rapidamente para encontrar uma solução.</button>
+                    <button class="button" onclick="answerQuestion('C')">Reunir informações e analisar antes de decidir.</button>
+                    <button class="button" onclick="answerQuestion('I')">Pensar fora da caixa e ser criativo.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question13">
+                <h2>Pergunta 13</h2>
+                <p>Em termos de organização, eu sou:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Metódico e paciente.</button>
+                    <button class="button" onclick="answerQuestion('I')">Flexível e improvisador.</button>
+                    <button class="button" onclick="answerQuestion('C')">Detalhista e preciso.</button>
+                    <button class="button" onclick="answerQuestion('D')">Estruturado e eficiente.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question14">
+                <h2>Pergunta 14</h2>
+                <p>Quando estou sob pressão, eu:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Verifico novamente para garantir que tudo esteja correto.</button>
+                    <button class="button" onclick="answerQuestion('D')">Me torno ainda mais focado e determinado.</button>
+                    <button class="button" onclick="answerQuestion('I')">Uso minha energia para manter o ambiente positivo.</button>
+                    <button class="button" onclick="answerQuestion('S')">Permaneço calmo e procuro soluções estáveis.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question15">
+                <h2>Pergunta 15</h2>
+                <p>Em situações de conflito, minha abordagem é:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Evitar confronto e buscar harmonia.</button>
+                    <button class="button" onclick="answerQuestion('D')">Ser direto e encontrar uma solução rápida.</button>
+                    <button class="button" onclick="answerQuestion('I')">Usar comunicação para diminuir a tensão.</button>
+                    <button class="button" onclick="answerQuestion('C')">Analisar o problema logicamente para resolver.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question16">
+                <h2>Pergunta 16</h2>
+                <p>Ao definir metas, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('I')">Metas que permitam criatividade e interação.</button>
+                    <button class="button" onclick="answerQuestion('S')">Objetivos que garantam estabilidade e segurança.</button>
+                    <button class="button" onclick="answerQuestion('C')">Metas bem definidas com passos claros.</button>
+                    <button class="button" onclick="answerQuestion('D')">Desafios ousados e objetivos ambiciosos.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question17">
+                <h2>Pergunta 17</h2>
+                <p>Quando estou aprendendo algo novo, eu prefiro:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Estudar os detalhes e teorias por trás do assunto.</button>
+                    <button class="button" onclick="answerQuestion('D')">Mergulhar e aprender fazendo.</button>
+                    <button class="button" onclick="answerQuestion('I')">Aprender em um ambiente interativo e dinâmico.</button>
+                    <button class="button" onclick="answerQuestion('S')">Aprender de forma gradual e com suporte.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question18">
+                <h2>Pergunta 18</h2>
+                <p>Em um projeto, eu valorizo mais:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Precisão e qualidade.</button>
+                    <button class="button" onclick="answerQuestion('D')">Resultados e eficiência.</button>
+                    <button class="button" onclick="answerQuestion('I')">Criatividade e inovação.</button>
+                    <button class="button" onclick="answerQuestion('S')">Cooperação e harmonia.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question19">
+                <h2>Pergunta 19</h2>
+                <p>Se algo inesperado acontece, eu:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('S')">Mantenho a calma e busco equilíbrio.</button>
+                    <button class="button" onclick="answerQuestion('C')">Avalio todas as opções antes de agir.</button>
+                    <button class="button" onclick="answerQuestion('D')">Tomo controle e ajusto o plano rapidamente.</button>
+                    <button class="button" onclick="answerQuestion('I')">Improvizo e adapto a situação.</button>
+                </div>
+            </div>
+
+            <div class="card hide" id="question20">
+                <h2>Pergunta 20</h2>
+                <p>Minha principal força em uma equipe é:</p>
+                <div class="button-group">
+                    <button class="button" onclick="answerQuestion('C')">Organizar e fornecer detalhes.</button>
+                    <button class="button" onclick="answerQuestion('D')">Liderar e tomar decisões rápidas.</button>
+                    <button class="button" onclick="answerQuestion('I')">Inspirar e conectar pessoas.</button>
+                    <button class="button" onclick="answerQuestion('S')">Ouvir e apoiar os colegas.</button>
+                </div>
+            </div>
         </div>
 
-        <div id="question-container">
-            <!-- As perguntas serão carregadas aqui -->
+        <div id="resultContainer">
+            <h2>Resultado DISC</h2>
+            <p id="userName"></p>
+            <div id="chartContainer">
+                <canvas id="chart"></canvas>
+            </div>
+            <div id="detailedResult"></div>
+            <button class="button" onclick="printResults()">Imprimir Resultado</button>
+            <button class="button" onclick="resetTest()">Refazer o Teste</button>
         </div>
-
-        <div id="navigation">
-            <button id="prev-btn" disabled>Anterior</button>
-            <button id="next-btn" disabled>Próximo</button>
-        </div>
-
-        <footer>
-            <p>© 2024 Avaliação DISC. Todos os direitos reservados.</p>
-        </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        const questions = [
-            {
-                question: "Minha personalidade é mais...",
-                answers: [
-                    { text: "De chefe e direta", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Extrovertida e expressiva", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Pacata e informal", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "De bom senso e precisa", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Eu prefiro um ambiente em que estou cercado por...",
-                answers: [
-                    { text: "Realização pessoal, recompensa e indicadores de alvos", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Fotografias, cartas e minhas “coisas”", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Lembranças e conforto", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Ordem, funcionalidade e organização", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Meu estilo pessoal tende a ser...",
-                answers: [
-                    { text: "Orientado para resultados", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Orientado para pessoas", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Orientado para equipe/processos", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Orientado para detalhes", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Minha maneira de responder a outros é ...",
-                answers: [
-                    { text: "Direta ao assunto", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Amigável e prestativa", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Equilibrada e controlada", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Fria e objetiva", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Quando ouço os outros, eu...",
-                answers: [
-                    { text: "Fico impaciente muitas vezes", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Minha mente começa a divagar", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Quero ouvir com atenção", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Sou seletivo e focalizo os fatos", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Eu gosto de falar com outros...",
-                answers: [
-                    { text: "Sobre minhas realizações", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Sobre mim mesmo e outras pessoas", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Sobre minha família e amigos", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Sobre coisas, informações ou organização", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Nos relacionamentos minha tendência é...",
-                answers: [
-                    { text: "Dirigir outros", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Influenciar outros", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Aceitar outros", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Avaliar outros", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Quando tomo decisões eu tenho inclinação para...",
-                answers: [
-                    { text: "Ser rápido ou usar as reações impulsivas", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Fazer o que eu sinto", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Estudar a situação e ser cauteloso", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Coletar informações e ser objetivo", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Em relação ao uso do meu tempo, eu acho que...",
-                answers: [
-                    { text: "Estou sempre pressionado pelo tempo", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Eu tendo a pensar no custo do tempo", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Eu respeito o tempo, mas não sou facilmente pressionado", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Eu valorizo e administro bem meu tempo", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "O ritmo com que eu vivo é...",
-                answers: [
-                    { text: "Veloz", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Entusiástico", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Equilibrado", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Controlado", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Meu tom normal de voz é...",
-                answers: [
-                    { text: "Emotivo, direto e dinâmico", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Emotivo e entusiasmado", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "De baixa emoção e baixa excitação", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Sem emoção e reservado", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Meus gestos geralmente são...",
-                answers: [
-                    { text: "Fortes e rápidos", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Abertos e amigáveis", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Comedidos", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Restritos e intencionais", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Minha maneira preferida de vestir-me é...",
-                answers: [
-                    { text: "Formal", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Casual", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Conforme o lugar", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Conservadora", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Minhas atitudes em geral podem ser descritas como...",
-                answers: [
-                    { text: "Autoritárias", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Elegantes, simpáticas e extrovertidas", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "Tolerantes ou abertas", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Observadoras ou reservadas", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
-            },
-            {
-                question: "Minhas conversas giram em torno de...",
-                answers: [
-                    { text: "Ir ao “X” da questão", value: { D: 4, I: 0, S: 0, C: 0 } },
-                    { text: "Histórias sobre mim mesmo e outros", value: { D: 0, I: 4, S: 0, C: 0 } },
-                    { text: "“como fazer” e/ou relacionamentos", value: { D: 0, I: 0, S: 4, C: 0 } },
-                    { text: "Fatos, informações e dados", value: { D: 0, I: 0, S: 0, C: 4 } }
-                ]
+        const totalQuestions = 20;
+        let currentQuestion = 1;
+        const results = { D: 0, I: 0, S: 0, C: 0 };
+
+        function answerQuestion(profile) {
+            results[profile]++;
+            const nextQuestion = currentQuestion + 1;
+            if (nextQuestion <= totalQuestions) {
+                document.getElementById(`question${currentQuestion}`).classList.add('hide');
+                document.getElementById(`question${nextQuestion}`).classList.remove('hide');
+                currentQuestion = nextQuestion;
+                updateProgressBar();
+            } else {
+                showResults();
             }
-        ];
-
-        let currentQuestionIndex = 0;
-        let scores = { D: 0, I: 0, S: 0, C: 0 };
-        let userName = "";
-
-        const questionContainer = document.getElementById("question-container");
-        const progressBar = document.getElementById("progress");
-        const prevBtn = document.getElementById("prev-btn");
-        const nextBtn = document.getElementById("next-btn");
-        const startBtn = document.getElementById("start-btn");
-        const nameInput = document.getElementById("name-input");
-        const errorMessage = document.getElementById("error-message");
-
-        function loadQuestion() {
-            const currentQuestion = questions[currentQuestionIndex];
-            questionContainer.innerHTML = `
-                <div class="question-card active">
-                    <h2>${currentQuestion.question}</h2>
-                    <ul>
-                        ${currentQuestion.answers.map((answer, index) => `
-                            <li>
-                                <input type="radio" name="answer" id="answer${index}" value="${index}">
-                                <label for="answer${index}">${answer.text}</label>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            `;
-
-            updateProgressBar();
-            nextBtn.disabled = true; // Desativa o botão próximo até que uma resposta seja selecionada
         }
 
         function updateProgressBar() {
-            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
-
-        function handleNavigation() {
-            const selectedAnswer = document.querySelector('input[name="answer"]:checked');
-            if (selectedAnswer) {
-                const answerIndex = selectedAnswer.value;
-                const selectedValues = questions[currentQuestionIndex].answers[answerIndex].value;
-                scores.D += selectedValues.D;
-                scores.I += selectedValues.I;
-                scores.S += selectedValues.S;
-                scores.C += selectedValues.C;
-
-                currentQuestionIndex++;
-
-                if (currentQuestionIndex >= questions.length) {
-                    showResults();
-                } else {
-                    loadQuestion();
-                }
-            }
+            const progress = (currentQuestion - 1) / totalQuestions * 100;
+            document.getElementById('progress').style.width = progress + '%';
         }
 
         function showResults() {
-            questionContainer.innerHTML = `
-                <div class="question-card active">
-                    <h2>Resultados</h2>
-                    <p>Parabéns ${userName}, seu resultado no Teste de Avaliação DISC é:</p>
-                    <ul>
-                        <li>Dominância (D): ${scores.D}</li>
-                        <li>Influência (I): ${scores.I}</li>
-                        <li>Estabilidade (S): ${scores.S}</li>
-                        <li>Conformidade (C): ${scores.C}</li>
-                    </ul>
-                    <button onclick="printResults()">Imprimir Resultados</button>
-                </div>
-            `;
-            prevBtn.style.display = "none";
-            nextBtn.style.display = "none";
+            document.getElementById('questionContainer').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+
+            const name = document.getElementById('nameInput').value;
+            document.getElementById('userName').innerText = `Nome: ${name}`;
+
+            const data = [
+                (results.D / totalQuestions) * 100,
+                (results.I / totalQuestions) * 100,
+                (results.S / totalQuestions) * 100,
+                (results.C / totalQuestions) * 100
+            ];
+            const labels = ['Dominância', 'Influência', 'Estabilidade', 'Conformidade'];
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Pontuação DISC (%)',
+                        data: data,
+                        backgroundColor: ['#f44336', '#ff9800', '#4caf50', '#2196f3']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+
+            displayDetailedResults(data, labels);
+        }
+
+        function displayDetailedResults(data, labels) {
+            const detailedResult = document.getElementById('detailedResult');
+            const max1 = Math.max(...data);
+            const index1 = data.indexOf(max1);
+
+            // Encontrar o segundo maior índice sem incluir o maior
+            const dataWithoutMax1 = data.slice();
+            dataWithoutMax1[index1] = -1; // Remover o maior para encontrar o segundo maior
+            const max2 = Math.max(...dataWithoutMax1);
+            const index2 = dataWithoutMax1.indexOf(max2);
+
+            let description = '';
+            const profile1 = labels[index1].charAt(0);
+            const profile2 = labels[index2].charAt(0);
+
+            // Mostra o perfil predominante e secundário se max2 for significativo
+            description = getProfileDescription(labels[index1]);
+
+            if (max2 >= 20) {
+                description += getCombinedProfileDescription(profile1, profile2);
+            }
+
+            detailedResult.innerHTML = description;
+        }
+
+        function getProfileDescription(profile) {
+            const descriptions = {
+                'Dominância': `
+                    <h3>Perfil Predominante: Dominante</h3>
+                    <p><strong>Características:</strong> Agressivo, competitivo, orientado para ação.</p>
+                    <p><strong>Pontos Fortes:</strong> Liderança forte e decisiva, capacidade de tomar decisões rápidas, alta motivação para alcançar resultados.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser impaciente com detalhes, tendência a ignorar feedbacks emocionais.</p>
+                    <p><strong>Tomada de Decisão:</strong> Baseada em lógica, rápida, focada em resultados.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Ambientes de alta pressão e liderança onde a ação rápida é valorizada.</p>
+                `,
+                'Influência': `
+                    <h3>Perfil Predominante: Influente</h3>
+                    <p><strong>Características:</strong> Comunicativo, persuasivo, otimista.</p>
+                    <p><strong>Pontos Fortes:</strong> Habilidade em motivar e inspirar os outros, capacidade de socializar e criar conexões.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser impulsivo ou ter dificuldade em seguir regras rígidas.</p>
+                    <p><strong>Tomada de Decisão:</strong> Baseada em intuição, frequentemente buscando consenso.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Situações que exigem criatividade e interação social.</p>
+                `,
+                'Estabilidade': `
+                    <h3>Perfil Predominante: Estável</h3>
+                    <p><strong>Características:</strong> Calmo, paciente, confiável.</p>
+                    <p><strong>Pontos Fortes:</strong> Habilidade em criar ambientes harmoniosos, excelente em cooperação e suporte.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode resistir a mudanças ou evitar conflitos.</p>
+                    <p><strong>Tomada de Decisão:</strong> Cautelosa, orientada para o consenso.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Ambientes previsíveis e estáveis.</p>
+                `,
+                'Conformidade': `
+                    <h3>Perfil Predominante: Analítico</h3>
+                    <p><strong>Características:</strong> Detalhista, preciso, metódico.</p>
+                    <p><strong>Pontos Fortes:</strong> Excelente em análise de dados e implementação de processos.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser excessivamente crítico ou inflexível.</p>
+                    <p><strong>Tomada de Decisão:</strong> Baseada em dados e fatos.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Ambientes que valorizam precisão e qualidade.</p>
+                `,
+            };
+            return descriptions[profile];
+        }
+
+        function getCombinedProfileDescription(profile1, profile2) {
+            const descriptions = {
+                'DI': `
+                    <h3>Combinação: Dominante-Influente</h3>
+                    <p><strong>Características:</strong> Líder carismático, persuasivo, motivador.</p>
+                    <p><strong>Pontos Fortes:</strong> Capacidade de motivar e influenciar grupos, excelente em situações sociais e de networking.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser impulsivo ou indeciso devido à ênfase na aceitação social.</p>
+                    <p><strong>Tomada de Decisão:</strong> Rápida, baseada em intuição e persuasão.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Vendas, marketing, e relações públicas onde o carisma é crucial.</p>
+                `,
+                'DS': `
+                    <h3>Combinação: Dominante-Estável</h3>
+                    <p><strong>Características:</strong> Líder firme, confiável, equilibrado.</p>
+                    <p><strong>Pontos Fortes:</strong> Forte capacidade de liderança e estabilidade emocional.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode resistir a mudanças rápidas ou imprevistas.</p>
+                    <p><strong>Tomada de Decisão:</strong> Racional, ponderada, mas decisiva.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Gestão de operações e ambientes corporativos estáveis.</p>
+                `,
+                'DC': `
+                    <h3>Combinação: Dominante-Analítico</h3>
+                    <p><strong>Características:</strong> Decisivo, orientado por dados, crítico.</p>
+                    <p><strong>Pontos Fortes:</strong> Excelente análise de dados e tomada de decisões informadas.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser muito crítico ou rígido em suas expectativas.</p>
+                    <p><strong>Tomada de Decisão:</strong> Baseada em dados, factual, metódica.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Gerenciamento de projetos, engenharia e TI.</p>
+                `,
+                'IS': `
+                    <h3>Combinação: Influente-Estável</h3>
+                    <p><strong>Características:</strong> Comunicativo, empático, colaborativo.</p>
+                    <p><strong>Pontos Fortes:</strong> Excelentes habilidades interpessoais e de mediação.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode evitar conflitos ou ter dificuldade em tomar decisões difíceis.</p>
+                    <p><strong>Tomada de Decisão:</strong> Empática, colaborativa, orientada para o consenso.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Recursos humanos, desenvolvimento de equipes e serviço ao cliente.</p>
+                `,
+                'IC': `
+                    <h3>Combinação: Influente-Analítico</h3>
+                    <p><strong>Características:</strong> Criativo, detalhista, persuasivo.</p>
+                    <p><strong>Pontos Fortes:</strong> Habilidades criativas e analíticas em equilíbrio.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser indeciso devido a análise excessiva.</p>
+                    <p><strong>Tomada de Decisão:</strong> Criativa, baseada em dados e tendências.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Marketing digital, design e análise de mercado.</p>
+                `,
+                'SC': `
+                    <h3>Combinação: Estável-Analítico</h3>
+                    <p><strong>Características:</strong> Confiável, preciso, meticuloso.</p>
+                    <p><strong>Pontos Fortes:</strong> Confiabilidade em tarefas complexas e detalhadas.</p>
+                    <p><strong>Pontos Fracos:</strong> Pode ser avesso ao risco e mudanças.</p>
+                    <p><strong>Tomada de Decisão:</strong> Cautelosa, baseada em dados, orientada para precisão.</p>
+                    <p><strong>Ambientes Favoráveis:</strong> Pesquisa científica, engenharia e funções administrativas.</p>
+                `
+            };
+
+            // Retornar a descrição correta independentemente da ordem dos perfis
+            return descriptions[profile1 + profile2] || descriptions[profile2 + profile1];
+        }
+
+        function resetTest() {
+            currentQuestion = 1;
+            results.D = results.I = results.S = results.C = 0;
+            document.getElementById('questionContainer').style.display = 'block';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById(`question${currentQuestion}`).classList.remove('hide');
+            updateProgressBar();
         }
 
         function printResults() {
-            const printContents = document.querySelector('.question-card.active').innerHTML;
-            const originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
             window.print();
-            document.body.innerHTML = originalContents;
-            location.reload();
         }
-
-        function startTest() {
-            userName = nameInput.value.trim();
-            if (userName === "") {
-                errorMessage.style.display = "block";
-            } else {
-                errorMessage.style.display = "none";
-                nameInput.style.display = "none";
-                startBtn.style.display = "none";
-                loadQuestion();
-                nextBtn.disabled = true; // Inicia o botão "Próximo" desativado
-                questionContainer.style.display = "flex"; // Mostra o container de perguntas
-                progressBar.style.display = "block"; // Mostra a barra de progresso
-                document.getElementById("navigation").style.display = "flex"; // Mostra a navegação
-            }
-        }
-
-        startBtn.addEventListener("click", startTest);
-
-        prevBtn.addEventListener("click", () => {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                loadQuestion();
-            }
-        });
-
-        nextBtn.addEventListener("click", handleNavigation);
-
-        questionContainer.addEventListener("change", () => {
-            nextBtn.disabled = false; // Ativa o botão próximo quando uma resposta é selecionada
-        });
     </script>
 </body>
+
 </html>
