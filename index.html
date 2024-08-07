@@ -123,7 +123,12 @@
             }
 
             #nameInput {
-                font-size: 14px;
+                margin-bottom: 20px;
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 16px;
             }
 
             .button {
@@ -397,7 +402,7 @@
                     <button type="button" class="button" onclick="answerQuestion('D', 16)">Desafios ousados e objetivos
                         ambiciosos.</button>
                 </div>
-            </div>
+                       </div>
 
             <div class="card" id="question17">
                 <h2>Pergunta 17</h2>
@@ -551,12 +556,84 @@
             const detailedResult = document.getElementById('detailedResult');
             let profileDescription = '';
 
-            profiles.forEach(profile => {
-                profileDescription += getProfileDescription(profile);
-            });
+            if (profiles.length > 1) {
+                profileDescription = getCombinationDescription(profiles);
+            } else {
+                profileDescription = getProfileDescription(profiles[0]);
+            }
 
             detailedResult.innerHTML = profileDescription;
             generateChart();
+        }
+
+        function getCombinationDescription(profiles) {
+            profiles.sort(); // Ordenar os perfis para garantir combinações consistentes
+            const combination = profiles.join('+');
+
+            switch (combination) {
+                case 'D+I':
+                case 'I+D':
+                    return `
+                        <h3>D+I (Dominância + Influência) ou I+D (Influência + Dominância)</h3>
+                        <p><strong>Características:</strong> Energético, assertivo, sociável.</p>
+                        <p><strong>Pontos Fortes:</strong> Líder natural, motivador, excelente em networking.</p>
+                        <p><strong>Pontos Fracos:</strong> Impulsividade, pode ignorar detalhes importantes.</p>
+                        <p><strong>Tomada de Decisão:</strong> Rápida e baseada em intuição e influência.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Ambientes dinâmicos onde a inovação é valorizada e onde podem liderar projetos ou equipes.</p>
+                    `;
+                case 'D+C':
+                case 'C+D':
+                    return `
+                        <h3>D+C (Dominância + Conformidade) ou C+D (Conformidade + Dominância)</h3>
+                        <p><strong>Características:</strong> Decidido, analítico, orientado a resultados.</p>
+                        <p><strong>Pontos Fortes:</strong> Excelente planejamento estratégico, foco em eficiência.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser inflexível, resistência a mudanças improvisadas.</p>
+                        <p><strong>Tomada de Decisão:</strong> Baseada em dados, análises e lógica.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Estruturas organizacionais onde a precisão e o planejamento são essenciais.</p>
+                    `;
+                case 'C+S':
+                case 'S+C':
+                    return `
+                        <h3>C+S (Conformidade + Estabilidade) ou S+C (Estabilidade + Conformidade)</h3>
+                        <p><strong>Características:</strong> Detalhista, preciso, metódico.</p>
+                        <p><strong>Pontos Fortes:</strong> Fiabilidade, paciência, consistência.</p>
+                        <p><strong>Pontos Fracos:</strong> Resistente a mudanças, pode ser excessivamente cauteloso.</p>
+                        <p><strong>Tomada de Decisão:</strong> Cuidadosa e ponderada, baseada em fatos.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Ambientes estáveis, onde as expectativas são claras e há tempo para análise detalhada.</p>
+                    `;
+                case 'I+S':
+                case 'S+I':
+                    return `
+                        <h3>I+S (Influência + Estabilidade) ou S+I (Estabilidade + Influência)</h3>
+                        <p><strong>Características:</strong> Empático, persuasivo, confiável.</p>
+                        <p><strong>Pontos Fortes:</strong> Excelente em construir relacionamentos, habilidades de comunicação.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode evitar conflitos, dificuldade em dizer "não".</p>
+                        <p><strong>Tomada de Decisão:</strong> Baseada no consenso e nas relações interpessoais.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Locais colaborativos onde a interação social e a harmonia são valorizadas.</p>
+                    `;
+                case 'D+S':
+                case 'S+D':
+                    return `
+                        <h3>D+S (Dominância + Estabilidade) ou S+D (Estabilidade + Dominância)</h3>
+                        <p><strong>Características:</strong> Confiável, focado, motivado.</p>
+                        <p><strong>Pontos Fortes:</strong> Equilíbrio entre ação rápida e consideração cuidadosa.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser inflexível em situações de conflito.</p>
+                        <p><strong>Tomada de Decisão:</strong> Rápida mas ponderada, considerando a segurança e os resultados.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Estruturas organizadas que permitem estabilidade com oportunidades de liderança.</p>
+                    `;
+                case 'I+C':
+                case 'C+I':
+                    return `
+                        <h3>I+C (Influência + Conformidade) ou C+I (Conformidade + Influência)</h3>
+                        <p><strong>Características:</strong> Criativo, analítico, comunicativo.</p>
+                        <p><strong>Pontos Fortes:</strong> Capacidade de inovar com atenção aos detalhes.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser indeciso devido ao excesso de análise.</p>
+                        <p><strong>Tomada de Decisão:</strong> Baseada em análises detalhadas e criatividade.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Locais que valorizam a criatividade com uma base de estrutura clara.</p>
+                    `;
+                default:
+                    return '<h3>Perfil Indefinido</h3>';
+            }
         }
 
         function getProfileDescription(letter) {
@@ -564,103 +641,38 @@
                 case 'D':
                     return `
                         <h3>Dominância</h3>
-                        <p>Você é direto, decidido e gosta de desafios. Você é excelente em tomar decisões rápidas e liderar equipes.</p>
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Direto e decidido</li>
-                            <li>Gosta de desafios</li>
-                            <li>Orientado para resultados</li>
-                            <li>Corre riscos</li>
-                        </ul>
-                        <h4>Pontos Fortes:</h4>
-                        <ul>
-                            <li>Grande motivador</li>
-                            <li>Organiza eventos</li>
-                            <li>Focado em resultados</li>
-                        </ul>
-                        <h4>Limitações:</h4>
-                        <ul>
-                            <li>Pode ser argumentativo</li>
-                            <li>Não gosta de rotina</li>
-                            <li>Pode ser autoritário</li>
-                        </ul>
-                        <h4>Grande Medo:</h4>
-                        <p>Perder controle ou ser visto como ineficiente.</p>
+                        <p><strong>Características:</strong> Direto, decidido, gosta de desafios.</p>
+                        <p><strong>Pontos Fortes:</strong> Grande motivador, organiza eventos, focado em resultados.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser argumentativo, não gosta de rotina, pode ser autoritário.</p>
+                        <p><strong>Tomada de Decisão:</strong> Rápida e orientada a resultados.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Ambientes competitivos onde podem liderar e tomar decisões rápidas.</p>
                     `;
                 case 'I':
                     return `
                         <h3>Influência</h3>
-                        <p>Você é sociável, falante e gosta de estar com pessoas. Você motiva e inspira os outros a fazerem seu melhor.</p>
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Sociável e falante</li>
-                            <li>Entusiasta e persuasivo</li>
-                            <li>Confiante e otimista</li>
-                        </ul>
-                        <h4>Pontos Fortes:</h4>
-                        <ul>
-                            <li>Motiva e encoraja outros</li>
-                            <li>Bom humor</li>
-                            <li>Paciência e compreensão</li>
-                        </ul>
-                        <h4>Limitações:</h4>
-                        <ul>
-                            <li>Pode ser desorganizado</li>
-                            <li>Prefere popularidade a resultados</li>
-                            <li>Desatento a detalhes</li>
-                        </ul>
-                        <h4>Grande Medo:</h4>
-                        <p>Rejeição ou perda de aprovação.</p>
+                        <p><strong>Características:</strong> Sociável, falante, gosta de estar com pessoas.</p>
+                        <p><strong>Pontos Fortes:</strong> Motiva e encoraja outros, bom humor, paciência e compreensão.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser desorganizado, prefere popularidade a resultados, desatento a detalhes.</p>
+                        <p><strong>Tomada de Decisão:</strong> Baseada em intuição e relações interpessoais.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Locais onde a interação social e a criatividade são valorizadas.</p>
                     `;
                 case 'S':
                     return `
                         <h3>Estabilidade</h3>
-                        <p>Você é confiável, paciente e leal. Prefere um ambiente previsível e evita conflitos.</p>
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Calmo e paciente</li>
-                            <li>Confiável e leal</li>
-                            <li>Bom ouvinte</li>
-                        </ul>
-                        <h4>Pontos Fortes:</h4>
-                        <ul>
-                            <li>Trabalho em equipe</li>
-                            <li>Estabilidade emocional</li>
-                            <li>Respeita autoridade</li>
-                        </ul>
-                        <h4>Limitações:</h4>
-                        <ul>
-                            <li>Resistente a mudanças</li>
-                            <li>Pode ser indeciso</li>
-                            <li>Dificuldade com prazos apertados</li>
-                        </ul>
-                        <h4>Grande Medo:</h4>
-                        <p>Perda de segurança e estabilidade.</p>
+                        <p><strong>Características:</strong> Confiável, paciente, leal.</p>
+                        <p><strong>Pontos Fortes:</strong> Trabalho em equipe, estabilidade emocional, respeita autoridade.</p>
+                        <p><strong>Pontos Fracos:</strong> Resistente a mudanças, pode ser indeciso, dificuldade com prazos apertados.</p>
+                        <p><strong>Tomada de Decisão:</strong> Cuidadosa e ponderada, baseada no consenso.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Ambientes estáveis e previsíveis, com tempo para análise.</p>
                     `;
                 case 'C':
                     return `
                         <h3>Conformidade</h3>
-                        <p>Você é analítico, preciso e detalhista. Prefere seguir regras e regulamentos.</p>
-                        <h4>Características:</h4>
-                        <ul>
-                            <li>Analítico e detalhista</li>
-                            <li>Conformista e disciplinado</li>
-                            <li>Sistemático e metódico</li>
-                        </ul>
-                        <h4>Pontos Fortes:</h4>
-                        <ul>
-                            <li>Padrões elevados</li>
-                            <li>Organização e precisão</li>
-                            <li>Analisa problemas profundamente</li>
-                        </ul>
-                        <h4>Limitações:</h4>
-                        <ul>
-                            <li>Pode ser crítico</li>
-                            <li>Resistente a mudanças</li>
-                            <li>Foco excessivo nos detalhes</li>
-                        </ul>
-                        <h4>Grande Medo:</h4>
-                        <p>Críticas e mudanças imprevistas.</p>
+                        <p><strong>Características:</strong> Analítico, preciso, detalhista.</p>
+                        <p><strong>Pontos Fortes:</strong> Padrões elevados, organização e precisão, analisa problemas profundamente.</p>
+                        <p><strong>Pontos Fracos:</strong> Pode ser crítico, resistente a mudanças, foco excessivo nos detalhes.</p>
+                        <p><strong>Tomada de Decisão:</strong> Baseada em fatos e análises detalhadas.</p>
+                        <p><strong>Ambientes Favoráveis:</strong> Estruturas organizacionais com regras claras e objetivos precisos.</p>
                     `;
                 default:
                     return '<h3>Perfil Indefinido</h3>';
@@ -702,3 +714,4 @@
 </body>
 
 </html>
+
